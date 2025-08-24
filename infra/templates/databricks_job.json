@@ -1,0 +1,51 @@
+{
+  "name": "gssa-monthly-refresh",
+  "tasks": [
+    {
+      "task_key": "ingest",
+      "notebook_task": {
+        "notebook_path": "/Repos/<repo>/data_pipeline/processing/notebooks/01_ingest_gssa.py",
+        "base_parameters": {
+          "EXECUTION_DATE": "{{execution_date}}"
+        }
+      },
+      "job_cluster_key": "shared-cluster"
+    },
+    {
+      "task_key": "curated",
+      "depends_on": [{"task_key": "ingest"}],
+      "notebook_task": {
+        "notebook_path": "/Repos/<repo>/data_pipeline/processing/notebooks/02_standardize_curated.py"
+      },
+      "job_cluster_key": "shared-cluster"
+    },
+    {
+      "task_key": "gold",
+      "depends_on": [{"task_key": "curated"}],
+      "notebook_task": {
+        "notebook_path": "/Repos/<repo>/data_pipeline/processing/notebooks/03_aggregate_gold.py"
+      },
+      "job_cluster_key": "shared-cluster"
+    }
+  ],
+  "job_clusters": [
+    {
+      "job_cluster_key": "shared-cluster",
+      "new_cluster": {
+        "spark_version": "13.3.x-scala2.12",
+        "num_workers": 2,
+        "node_type_id": "Standard_D4s_v5",
+        "spark_env_vars": {
+          "RAW_BASE": "/mnt/datalake/raw/gssa",
+          "CURATED_BASE": "/mnt/datalake/curated/gssa",
+          "GOLD_BASE": "/mnt/datalake/gold/gssa"
+        }
+      }
+    }
+  ],
+  "schedule": {
+    "quartz_cron_expression": "0 0 3 1 * ?",
+    "timezone_id": "UTC",
+    "pause_status": "UNPAUSED"
+  }
+}
