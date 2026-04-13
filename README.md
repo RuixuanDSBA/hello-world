@@ -20,7 +20,8 @@
 - **常见获取渠道**：
   - WFS/WMS/REST GIS 服务
   - 批量下载（CSV/GeoJSON/Shapefile）
-  - 数据门户 API（若提供）
+  - CKAN API：适用于通过 CKAN 数据门户检索数据集元数据、资源链接与更新信息
+  - CSW（Catalog Service for the Web）：适用于通过标准地理空间目录服务检索图层、服务与元数据记录
 - **配置环境变量（示例）**：
   - `GSSA_TENEMENT_WFS_URL="https://<GSSA_WFS_ENDPOINT>/tenements"`
   - `GSSA_DRILLHOLE_WFS_URL="https://<GSSA_WFS_ENDPOINT>/drillholes"`
