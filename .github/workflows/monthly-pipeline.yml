@@ -1,0 +1,14 @@
+name: monthly-gssa-refresh
+
+on:
+  schedule:
+    - cron: '0 3 1 * *'
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print placeholder
+        run: echo "TODO: trigger ADF pipeline or az cli to refresh data"

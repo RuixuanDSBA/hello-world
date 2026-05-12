@@ -1,0 +1,33 @@
+name: run-databricks-job
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: "Databricks Job ID"
+        required: true
+      execution_date:
+        description: "Execution date (YYYY-MM-01)"
+        required: false
+        default: ""
+
+jobs:
+  run-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Call Databricks Jobs Run Now
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          exec_date=${{ github.event.inputs.execution_date }}
+          payload='{"job_id": '${{ github.event.inputs.job_id }}''
+          if [ -n "$exec_date" ]; then
+            payload=${payload}', "python_params": ["EXECUTION_DATE='$exec_date'"]'
+          fi
+          payload=${payload}'}'
+          curl -sSL -X POST "$DATABRICKS_HOST/api/2.1/jobs/run-now" \
+            -H "Authorization: Bearer $DATABRICKS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$payload" | jq '.'
